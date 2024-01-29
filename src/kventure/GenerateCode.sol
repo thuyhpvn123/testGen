@@ -290,11 +290,11 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
             rateBoost: _rateBoost,
             delegate: _delegate,
             status: _isBlock(_lock),
-            origin:"KVENTURE",
-            mintedAmount: 0,//??
-            releasePercentage:100,//??
-            lockTime:0,//???
-            keyHash:bytes32(0),//???
+            origin:"KVEN",
+            mintedAmount: 0,
+            releasePercentage:100,
+            lockTime:0,
+            keyHash:bytes32(0),
             currentDeposit:0
         });
         INFT(nft).safeMint(buyer,code);
