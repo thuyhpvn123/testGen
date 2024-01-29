@@ -312,7 +312,7 @@ contract KventureTest is Test{
 
         kventure.UpdateRank(root,5); //set rank de root du dk rank nhan sale bonus
         kventure.UpdateRank(address(0x8),3); //set rank de 0x8 du dk rank nhan sale bonus
-        product.order(idArr,quaArr,lockArr,codeHashes,delegates,code0xb11,address(0xb12));
+        bytes32 orderId = product.order(idArr,quaArr,lockArr,codeHashes,delegates,code0xb11,address(0xb12));
         vm.stopPrank();      
         assertEq(
             usdt.balanceOf(address(0xb12)),
@@ -359,6 +359,10 @@ contract KventureTest is Test{
         );
         assertEq(productInfo.id, idArr[0], "Err product info - id");
         assertEq(productInfo.memberPrice, 100_000*USDT_AMOUNT, "Err product info - price");
+
+        // Check Order History
+        PackageInfoStruct.Order memory orderInfo = product.getOrderInfoById(orderId);
+        assertEq(orderInfo.buyer, address(0xb12), "Err order info - buyer");
     }
        
     
