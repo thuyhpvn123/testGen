@@ -1,0 +1,230 @@
+pragma solidity 0.8.19;
+import "forge-std/Test.sol";
+// import {console} from "forge-std/console.sol";
+import {KVenture} from "../src/kventure/kventure.sol";
+import {MasterPool} from "../src/kventure/MasterPool.sol";
+import {USDT} from "../src/kventure/USDT.sol";
+import {BinaryTree} from "../src/kventure/BinaryTree.sol";
+import {KventureCode} from "../src/kventure/GenerateCode.sol";
+import {Product} from "../src/kventure/Product.sol";
+import {KventureNft} from "../src/kventure/PackageNFT.sol";
+import {PackageInfoStruct} from "../src/kventure/AbstractPackage.sol";
+contract KventureTest is Test{
+    KVenture public kventure;
+    MasterPool public masterPool;
+    KventureCode public kVentureCode;
+    USDT public usdt;
+    BinaryTree public binarytree;
+    Product public product;
+    KventureNft public nft;
+    address public deployer = address(0x123456);
+    address public root = address(0x1234567);
+    address public wallet = address(0x12345678);
+    address public partnerWallet = address(0x123456789);
+    bytes32 public codeRoot;
+    address public minter = address(0x123);
+    address public boostStorage = address(0x124);
+
+    //branch 1
+    address [] public level1;
+    bytes32 [] refcodeLevel1;
+    address [] public level2;
+    bytes32 [] refcodeLevel2;
+    address [] public level3;
+    bytes32 [] refcodeLevel3;
+    bytes32 phone= bytes32(0x40948b0de70ef650857db7858448d3981a2be2d06b40551427eefe1b1f956f31);
+    bytes32 [] refcode;
+    address [] public addressList;
+    uint256 USDT_AMOUNT = 1_000_000;
+
+
+    //3-6-16
+    // constructor(){
+    //     initAddressList();
+    // }
+    function setUp()public{
+        vm.startPrank(deployer);
+        kventure = new KVenture();
+        usdt = new USDT();
+        masterPool = new MasterPool(address(usdt));
+        binarytree = new BinaryTree();
+        kVentureCode = new KventureCode();
+        nft = new KventureNft();
+        product = new Product();
+        kventure.initialize(address(usdt),address(masterPool),address(binarytree),root,wallet,partnerWallet,address(kVentureCode));
+        kventure.SetPackageController(address(product));
+        masterPool.setController(address(kventure));        
+        masterPool.setController(address(product));
+        kVentureCode.initialize(address(usdt),address(masterPool),address(minter),address(boostStorage),address(product),address(nft),address(kVentureCode));
+        bytes32  MINTER_ROLE = keccak256("MINTER_ROLE");
+        nft.grantRole(MINTER_ROLE,address(kVentureCode));
+        product.initialize(address(usdt),address(masterPool),address(kVentureCode),address(kventure));
+        product.SetAdmin(deployer);
+        initAddressList();
+        mintToList();
+        vm.stopPrank();
+        getRefCodeRoot();
+        vm.stopPrank();
+    }
+    function initAddressList() internal {
+        addressList.push(address(0x1));
+        addressList.push(address(0x2));
+        addressList.push(address(0x3));
+        addressList.push(address(0x4));
+        addressList.push(address(0x5));
+        addressList.push(address(0x6));
+        addressList.push(address(0x7));
+        addressList.push(address(0x8));
+        for(uint256 i=0;i<addressList.length;i++){
+            vm.deal(addressList[i],100 ether);
+            // vm.startPrank(addressList[i]);
+            // usdt.approve(address(kventure),100000000000000000000000);
+            // vm.stopPrank();
+        }
+    }
+    function mintToList() public{
+        for(uint256 i=0;i<addressList.length;i++){
+            usdt.mintToAddress(addressList[i], 70*USDT_AMOUNT);
+        }
+    }
+    function getRefCodeRoot() public {
+        vm.startPrank(root);
+        codeRoot = kventure.GetCodeRef();
+        vm.stopPrank();
+    }
+    // function testRegister() public {
+    //     uint256 fee = 50*USDT_AMOUNT;
+    //     vm.startPrank(address(0x1));
+    //     usdt.approve(address(kventure),fee);
+    //     kventure.Register(phone,codeRoot,0,bytes32(0),address(0x2));
+    //     vm.stopPrank();
+    //     assertEq(
+    //         usdt.balanceOf(address(0x1)),
+    //         20*USDT_AMOUNT,
+    //         "Error balance "
+    //     );
+    //     assertEq(
+    //         usdt.balanceOf(address(0x2)),
+    //         70*USDT_AMOUNT,
+    //         "Error balance "
+    //     );
+    //     assertTrue(kventure.CheckActiveMember(address(0x2)));
+    //     assertEq(kventure.CheckActiveMember(address(0x1)),false,"this address can not be an active");
+    // }
+    // function testPaySub() public {
+    //     vm.startPrank(address(0x1));
+    //     usdt.approve(address(kventure),70*USDT_AMOUNT);
+    //     kventure.Register(phone,codeRoot,0,bytes32(0),address(0x2));
+    //     kventure.PaySub(2,address(0x2));
+    //     vm.stopPrank();
+    //     assertEq(
+    //         usdt.balanceOf(address(0x1)),
+    //         0,
+    //         "Error balance "
+    //     );
+    //     assertEq(
+    //         usdt.balanceOf(address(0x2)),
+    //         70*USDT_AMOUNT,
+    //         "Error balance "
+    //     );
+    //     assertTrue(kventure.CheckActiveMember(address(0x2)));
+    //     assertEq(kventure.CheckActiveMember(address(0x1)),false,"this address can not be an active");
+    // }
+    // function testOrder() public {
+    //     vm.deal(address(0x3),100 ether);
+    //     vm.deal(address(0x4),100 ether);
+    //     //admin add product
+    //     vm.startPrank(deployer);
+    //     product.adminAddProduct("a",5000*USDT_AMOUNT,"ao",true);
+    //     usdt.mintToAddress(address(0x3), 10000*USDT_AMOUNT);
+    //     usdt.mintToAddress(address(0x4), 10000*USDT_AMOUNT);
+    //     usdt.mintToAddress(address(masterPool), 500000000000000000*USDT_AMOUNT);
+    //     PackageInfoStruct.Product [] memory ProductArr = new PackageInfoStruct.Product[](1);
+    //     ProductArr = product.adminViewProduct();
+
+    //     vm.stopPrank();
+    //     //address 0x3 order for address 0x4
+    //     vm.startPrank(address(0x3));
+    //     usdt.approve(address(product),10000*USDT_AMOUNT);
+
+    //     bytes32[] memory idArr = new bytes32[](1);
+    //     idArr[0] = ProductArr[0].id;
+    //     uint256[] memory quaArr = new uint256[](1);
+    //     quaArr[0]=1;
+    //     bool[] memory lockArr = new bool[](1);
+    //     lockArr[0]=false;
+    //     bytes32[] memory codeHash = new bytes32[](1);
+    //     codeHash[0] = bytes32("234");
+    //     bytes32[][] memory codeHashes = new bytes32[][](1);
+    //     codeHashes[0] = codeHash;
+    //     bool[] memory cloudMinings = new bool[](1);
+    //     cloudMinings[0]=false;
+    //     address[] memory delegates = new address[](1);
+    //     delegates[0]=address(0);
+
+    //     product.order(idArr,quaArr,lockArr,codeHashes,cloudMinings,delegates,codeRoot,address(0x4));
+    //     vm.stopPrank();
+    //     console.log("balance 0x3: ",usdt.balanceOf(address(0x3)));
+    //     assertLt(
+    //         usdt.balanceOf(address(0x3)),
+    //         10000*USDT_AMOUNT,
+    //         "Error balance "
+    //     );  
+    //     assertEq(
+    //         usdt.balanceOf(address(0x4)),
+    //         10000*USDT_AMOUNT,
+    //         "Error balance "
+    //     ); 
+    // }
+    function testRegister() public {
+    uint256 fee = 50*USDT_AMOUNT;
+
+
+    vm.startPrank(address(0x2));
+    usdt.approve(address(kventure),fee);
+    kventure.Register(phone,codeRoot,0,bytes32(0),address(0x2));
+    bytes32 codeRef2 = kventure.GetCodeRef();
+    vm.stopPrank();
+
+    vm.startPrank(address(0x3));
+    usdt.approve(address(kventure),fee);
+    kventure.Register(phone,codeRoot,0,bytes32(0),address(0x3));
+    bytes32 codeRef3 = kventure.GetCodeRef();
+    vm.stopPrank();
+
+    vm.startPrank(address(0x4));
+    usdt.approve(address(kventure),fee);
+    kventure.Register(phone,codeRoot,0,bytes32(0),address(0x4));
+    vm.stopPrank();
+
+     vm.startPrank(address(0x5));
+    usdt.approve(address(kventure),fee);
+    kventure.Register(phone,codeRoot,0,bytes32(0),address(0x5));
+    vm.stopPrank();
+
+    vm.startPrank(address(0x6));
+    usdt.approve(address(kventure),fee);
+    kventure.Register(phone,codeRef2,0,bytes32(0),address(0x6));
+    vm.stopPrank();
+
+    // vm.startPrank(address(0x7));
+    // usdt.approve(address(kventure),fee);
+    // kventure.Register(phone,codeRef2,0,bytes32(0),address(0x7));
+    // bytes32 codeRef1 = kventure.GetCodeRef();
+    // vm.stopPrank();
+
+    }
+    function testPayGoodSaleBonusWeekly() public {
+        vm.startPrank(deployer);
+        kventure.SetRevenue(address(0x1),300);
+        kventure.SetRevenue(address(0x2),500);
+        kventure.SetRevenue(address(0x3),600);
+        kventure.SetRevenue(address(0x4),800);
+        kventure.SetRevenue(address(0x5),1200);
+        kventure.payGoodSaleBonusWeekly();
+        vm.stopPrank();
+    }
+
+
+}
+

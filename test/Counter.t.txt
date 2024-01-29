@@ -1,0 +1,851 @@
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
+
+import {console} from "forge-std/console.sol";
+import {Test} from "forge-std/Test.sol";
+import {KventureCode} from "../../src/kventure/GenerateCode.sol";
+import {PackageInfoStruct} from "../../src/kventure/AbstractPackage.sol";
+import {MasterPool} from "../../src/kventure/MasterPool.sol";
+import {USDT} from "../../src/kventure/USDT.sol";
+import {MinterSmC} from "../../src/mining/smc_miner.sol";
+import {BoostingStorage} from "../../src/mining/code_storage.sol";
+import {BinaryTree} from "../../src/kventure/BinaryTree.sol";
+import {KVenture} from "../../src/kventure/kventure.sol";
+import {console} from "forge-std/console.sol";
+
+contract KventureTest is Test {
+    MasterPool public masterPool;
+    KventureCode public kVentureCode;
+    USDT public usdt;
+    MinterSmC public minter;
+    BoostingStorage public codeStorage;
+    KVenture public ref;
+    BinaryTree public binaryTree;
+
+    address public deployer = address(0x1);
+    address public buyer = address(0x2);
+    address public minter_admin = address(0x3);
+    address public minter_server = address(0x4);
+
+    bytes32[] public codeHashes;
+
+    // Kventure Config
+    address public corporationWallet = address(0x999);
+    address public partnerWallet = address(0x998);
+    address public rootKventure = address(0x1000);
+    bytes32 public rootCodeRef;
+
+    // Minter Config
+    uint256[] public _initUserHalving = [20000, 100000, 1000000];
+    uint256 public _rateHalving = 100;
+    uint256[] public _percentageArr = [7, 7, 5, 4, 3, 3, 3, 1];
+
+    string[] public uuidArray;
+
+    string public genesisUUID;
+    string public userUUID;
+
+    uint256 public defaultMiningSpeed;
+
+    address public mtiCloudMining = address(0x5);
+    address public kventureCloudMining = address(0x6);
+
+    uint256 one_million_usdt = 1_000_000 * 10 ** 6;
+    uint256 USDT_AMOUNT = 1_000_000;
+    address[] public addressList;
+
+    // Time Config
+    uint256 public currentTime = 1704182281;
+
+    // Minter Event
+    event ECreateCloudMining(
+        address user,
+        string uuid,
+        address delegate,
+        uint expiredTime,
+        uint atTime
+    );
+    event EExtendCloudMining(
+        address user,
+        string uuid,
+        uint expiredTime,
+        uint atTime
+    );
+    event EChangeDelegate(
+        address user,
+        string uuid,
+        address delegate,
+        uint expiredTime,
+        uint atTime
+    );
+
+    constructor() {
+        vm.warp(currentTime);
+        vm.startPrank(deployer);
+        usdt = new USDT();
+        masterPool = new MasterPool(address(usdt));
+        minter = new MinterSmC();
+        codeStorage = new BoostingStorage();
+        binaryTree = new BinaryTree();
+        kVentureCode = new KventureCode();
+
+        // Ref Kventure
+        ref = new KVenture();
+        ref.initialize(
+            address(usdt),
+            address(masterPool),
+            address(binaryTree),
+            address(rootKventure),
+            address(corporationWallet),
+            address(partnerWallet),
+            address(kVentureCode)
+        );
+        masterPool.setController(address(ref));
+
+        kVentureCode.initialize(
+            address(usdt),
+            address(ref),
+            address(masterPool),
+            address(minter),
+            address(codeStorage),
+            address(codeStorage),
+            address(codeStorage)
+        );
+        ref.SetPackageController(address(kVentureCode));
+
+        usdt.mintToAddress(buyer, 1 * 10 ** 20);
+        usdt.mintToAddress(address(masterPool), 1 * 10 ** 20);
+
+        // Set Up Boost Storage
+        codeStorage.initialize(address(minter), address(minter));
+        codeStorage.setKventure(address(kVentureCode));
+
+        // Set Up Minter
+        minter.initialize(_initUserHalving, _rateHalving);
+        minter.setAdminAddress(minter_admin, true);
+        minter.editController(minter_server, true);
+        minter.setBoostStorage(address(codeStorage));
+
+        minter.AssignDelegateType(mtiCloudMining, minter.MTI());
+        minter.AssignDelegateType(kventureCloudMining, minter.KVENTURE());
+
+        defaultMiningSpeed = (minter.baseClaim() * 50) / 100;
+
+        vm.stopPrank();
+
+        vm.startPrank(minter_admin);
+        minter.setReferralConfig(_percentageArr);
+        vm.stopPrank();
+
+        vm.startPrank(minter_server);
+        genesisUUID = "genesis";
+        minter.AddUUID(genesisUUID);
+        userUUID = "user-1";
+        createUUID(userUUID);
+        minter.AddRef(genesisUUID, uuidArray);
+        vm.stopPrank();
+
+        vm.startPrank(rootKventure);
+        rootCodeRef = ref.GetCodeRef(); // Get CodeRef of root of Kventure
+        vm.stopPrank();
+    }
+
+    function testDeployment() internal {
+        // Kventure
+        assertGt(kVentureCode.deployedDate(), 0, "Err in deploy kVenture");
+        assertEq(
+            address(kVentureCode.boostStorage()),
+            address(codeStorage),
+            "Err in deploy kVenture"
+        );
+        assertEq(
+            address(kVentureCode.minter()),
+            address(minter),
+            "Err in deploy kVenture"
+        );
+        assertEq(
+            address(kVentureCode.masterPool()),
+            address(masterPool),
+            "Err in deploy kVenture"
+        );
+        assertEq(
+            address(kVentureCode.usdt()),
+            address(usdt),
+            "Err in deploy kVenture"
+        );
+
+        // Code Storage
+        assertEq(
+            address(codeStorage.kVenture()),
+            address(kVentureCode),
+            "Err in deploy kVenture - set kVenture address"
+        );
+
+        // Minter
+        assertEq(
+            address(minter.boostStorage()),
+            address(codeStorage),
+            "Err in deploy minter - set code storage address"
+        );
+
+        assertEq(
+            minter.mDelegateType(mtiCloudMining),
+            minter.MTI(),
+            "Err in deploy minter - set delegate for mti"
+        );
+
+        assertEq(
+            minter.mDelegateType(kventureCloudMining),
+            minter.KVENTURE(),
+            "Err in deploy minter - set delegate for mti"
+        );
+
+        // Kventure Ref
+        assertEq(
+            ref.partnerWallet(),
+            partnerWallet,
+            "Err in Ref Kventure - Partner Wallet"
+        );
+    }
+
+    function eraseCodeHash() internal {
+        while (codeHashes.length > 0) {
+            codeHashes.pop();
+        }
+    }
+
+    function mintUSDT(address user, uint256 amount) internal {
+        vm.startPrank(deployer);
+        usdt.mintToAddress(user, amount);
+        vm.stopPrank();
+    }
+
+    function createCodeHash(string memory codeStr) internal {
+        eraseCodeHash();
+        codeHashes.push(keccak256(abi.encodePacked(codeStr)));
+    }
+
+    function eraseUUID() internal {
+        while (uuidArray.length > 0) {
+            uuidArray.pop();
+        }
+    }
+
+    function createUUID(string memory uuid) internal {
+        eraseUUID();
+        uuidArray.push(uuid);
+    }
+
+    function setClaimMiningAddress(address _user, string memory uuid) internal {
+        vm.startPrank(minter_server);
+        minter.setClaimAddress(_user, uuid);
+        vm.stopPrank();
+    }
+
+    function testAddToPlatiumRank() internal {
+        uint max = 50009;
+        vm.startPrank(deployer);
+        for (uint256 node = 1; node <= max; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], 50*USDT_AMOUNT);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef;
+        vm.startPrank(addressList[0]);
+        usdt.approve(address(ref),USDT_AMOUNT*10**10);
+        ref.Register(rootCodeRef,rootCodeRef,0);
+        nodeCodeRef = ref.GetCodeRef();
+        vm.stopPrank();
+
+        vm.startPrank(addressList[1]);
+        usdt.approve(address(ref),USDT_AMOUNT*10**10);
+        ref.Register(nodeCodeRef,nodeCodeRef,0);
+        vm.stopPrank();
+
+      
+        vm.startPrank(addressList[2]);
+        usdt.approve(address(ref),USDT_AMOUNT*10**10);
+        ref.Register(nodeCodeRef,nodeCodeRef,0);
+        vm.stopPrank();
+
+        for (uint256 node = 4; node <= 50008; node++) {
+            vm.startPrank(addressList[node-1]);
+            usdt.approve(address(ref),USDT_AMOUNT*10**10);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            // nodeCodeRef = ref.GetCodeRef();
+        console.log(node);
+
+            vm.stopPrank();
+        }
+        
+        console.log(addressList[0]);
+        console.log(ref.ranks(addressList[0]));
+        console.log(ref._calculateTotalMaxMember1BranchForUpdateLevel(addressList[0],3));
+        console.log(ref._calculateTotalChildWithRank(addressList[0],0));
+    }
+
+
+    function testBonus1LevelDirect() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        for (uint256 node = 1; node <= 2; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef = rootCodeRef;
+        for (uint256 node = 0; node < 2; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+        }
+
+        assertEq(
+            ref.balanceOf(addressList[0]),
+            fee/2,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[1]),
+            0,
+            "Error balance after bonus"
+        );
+    }
+
+    function testBonus10LevelUnrankedDirect() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        for (uint256 node = 1; node <= 11; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef = rootCodeRef;
+        for (uint256 node = 0; node < 11; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+        }
+
+        for (uint256 node = 0; node < 10; node++) {
+            assertEq(
+                ref.balanceOf(addressList[node]),
+                fee/2,
+                "Error balance after bonus"
+            );
+        }
+
+        
+        assertEq(
+            ref.balanceOf(addressList[10]),
+            0,
+            "Error balance after bonus"
+        );
+    }
+
+
+    function testBonus10LevelBronzeDirect() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        for (uint256 node = 1; node <= 11; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef = rootCodeRef;
+        for (uint256 node = 0; node < 11; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+            vm.startPrank(deployer);
+            ref.UpdateRank(addressList[node],1);
+            vm.stopPrank();
+        }
+
+       
+
+        for (uint256 node = 0; node < 9; node++) {
+            assertEq(
+                ref.balanceOf(addressList[node]),
+                fee*(50+10)/100,
+                "Error balance after bonus"
+            );
+        }
+
+        
+        assertEq(
+            ref.balanceOf(addressList[9]),
+            fee/2,
+            "Error balance after bonus"
+        );
+        assertEq(
+            ref.balanceOf(addressList[10]),
+            0,
+            "Error balance after bonus"
+        );
+    }
+
+    function testBonus10LevelSilverDirect() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        for (uint256 node = 1; node <= 11; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef = rootCodeRef;
+        for (uint256 node = 0; node < 11; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+            vm.startPrank(deployer);
+            ref.UpdateRank(addressList[node],2);
+            vm.stopPrank();
+        }
+
+       
+
+        for (uint256 node = 0; node < 7; node++) {
+            assertEq(
+                ref.balanceOf(addressList[node]),
+                fee*(50+10+5+5)/100,
+                "Error balance after bonus"
+            );
+        }
+
+        
+        assertEq(
+            ref.balanceOf(addressList[7]),
+            fee*(50+10+5)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[8]),
+            fee*(50+10)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[9]),
+            fee/2,
+            "Error balance after bonus"
+        );
+        assertEq(
+            ref.balanceOf(addressList[10]),
+            0,
+            "Error balance after bonus"
+        );
+    }
+
+    function testBonus10LevelGoldDirect() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        for (uint256 node = 1; node <= 11; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef = rootCodeRef;
+        for (uint256 node = 0; node < 11; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+            vm.startPrank(deployer);
+            ref.UpdateRank(addressList[node],3);
+            vm.stopPrank();
+        }
+
+       
+
+        for (uint256 node = 0; node < 5; node++) {
+            assertEq(
+                ref.balanceOf(addressList[node]),
+                fee*(50+10+5+5+3+2)/100,
+                "Error balance after bonus"
+            );
+        }
+
+        assertEq(
+            ref.balanceOf(addressList[5]),
+            fee*(50+10+5+5+3)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[6]),
+            fee*(50+10+5+5)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[7]),
+            fee*(50+10+5)/100,
+            "Error balance after bonus"
+        );
+        
+        assertEq(
+            ref.balanceOf(addressList[7]),
+            fee*(50+10+5)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[8]),
+            fee*(50+10)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[9]),
+            fee/2,
+            "Error balance after bonus"
+        );
+        assertEq(
+            ref.balanceOf(addressList[10]),
+            0,
+            "Error balance after bonus"
+        );
+    }
+
+    function testBonus10LevelPlatiumDirect() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        for (uint256 node = 1; node <= 11; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef = rootCodeRef;
+        for (uint256 node = 0; node < 11; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+            vm.startPrank(deployer);
+            ref.UpdateRank(addressList[node],4);
+            vm.stopPrank();
+        }
+
+       
+
+        for (uint256 node = 0; node < 3; node++) {
+            assertEq(
+                ref.balanceOf(addressList[node]),
+                fee*(50+10+5+5+3+2+2+1)/100,
+                "Error balance after bonus"
+            );
+        }
+
+        assertEq(
+            ref.balanceOf(addressList[3]),
+            fee*(50+10+5+5+3+2+2)/100,
+            "Error balance after bonus"
+        );
+
+         assertEq(
+            ref.balanceOf(addressList[4]),
+            fee*(50+10+5+5+3+2)/100,
+            "Error balance after bonus"
+        );
+
+
+        assertEq(
+            ref.balanceOf(addressList[5]),
+            fee*(50+10+5+5+3)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[6]),
+            fee*(50+10+5+5)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[7]),
+            fee*(50+10+5)/100,
+            "Error balance after bonus"
+        );
+        
+        assertEq(
+            ref.balanceOf(addressList[7]),
+            fee*(50+10+5)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[8]),
+            fee*(50+10)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[9]),
+            fee/2,
+            "Error balance after bonus"
+        );
+        assertEq(
+            ref.balanceOf(addressList[10]),
+            0,
+            "Error balance after bonus"
+        );
+    }
+
+    function testBonus10LevelDiamondDirect() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        uint256 bonusRank = 50*2*USDT_AMOUNT/100;
+        for (uint256 node = 1; node <= 11; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+
+        bytes32 nodeCodeRef = rootCodeRef;
+        for (uint256 node = 0; node < 11; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+            vm.startPrank(deployer);
+            ref.UpdateRank(addressList[node],5);
+            vm.stopPrank();
+        }
+        
+        assertEq(
+            ref.balanceOf(addressList[0])/100,
+            (fee*(50+10+5+5+3+2+2+1+1+1)/100 + bonusRank*7381/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[1])/100,
+            (fee*(50+10+5+5+3+2+2+1+1)/100 + bonusRank*4861/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[2])/100,
+            (fee*(50+10+5+5+3+2+2+1)/100 + bonusRank*3601/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[3])/100,
+            (fee*(50+10+5+5+3+2+2)/100 + bonusRank*2761/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[4])/100,
+            (fee*(50+10+5+5+3+2)/100 + bonusRank*2131/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[5])/100,
+            (fee*(50+10+5+5+3)/100 + bonusRank*1627/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[6])/100,
+            (fee*(50+10+5+5)/100 + bonusRank*1207/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[7])/100,
+            (fee*(50+10+5)/100 + bonusRank*847/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[8])/100,
+            (fee*(50+10)/100 + bonusRank*532/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[9])/100,
+            (fee*50/100 + bonusRank*252/2520)/100,
+            "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[10]),
+            0,
+            "Error balance after bonus"
+        );
+    }
+
+    function testBonus15LevelDiamondMatching() public {
+        vm.startPrank(deployer);
+        uint256 fee = 50*USDT_AMOUNT;
+        for (uint256 node = 1; node <= 35; node++) {
+            addressList.push(vm.addr(node));
+            usdt.mintToAddress(addressList[node-1], fee);
+        }
+        vm.stopPrank();
+        vm.startPrank(addressList[0]);
+        usdt.approve(address(ref),fee);
+        bytes32 nodeCodeRef = rootCodeRef;
+        ref.Register(nodeCodeRef,nodeCodeRef,0);
+        nodeCodeRef = ref.GetCodeRef();
+        vm.stopPrank();
+
+        vm.startPrank(deployer);
+        ref.UpdateRank(addressList[0],5);
+        vm.stopPrank();
+
+        for (uint256 node = 1; node < 15; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            vm.stopPrank();
+        }
+
+        for (uint256 node = 15; node < 35; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.approve(address(ref),fee);
+            ref.Register(nodeCodeRef,nodeCodeRef,0);
+            nodeCodeRef = ref.GetCodeRef();
+            vm.stopPrank();
+        }
+
+
+        for (uint256 node = 0; node < 35; node++) {
+            vm.startPrank(addressList[node]);
+            usdt.Burn(addressList[node],usdt.balanceOf(addressList[node]));
+            vm.stopPrank();
+            vm.startPrank(deployer);
+            ref.UpdateRank(addressList[node],6);
+            vm.stopPrank();
+        }
+        uint256 SubFee = 360*USDT_AMOUNT;
+        vm.startPrank(deployer);
+        usdt.mintToAddress(addressList[34], SubFee);
+        vm.stopPrank();
+
+        vm.startPrank(addressList[34]);
+        usdt.approve(address(ref),SubFee);
+        ref.PaySub(36);
+        vm.stopPrank();
+
+        // Only bonus diamond
+        uint256 bonusCrownDiamond = SubFee*25/1000/35;
+        for (uint256 node = 0; node < 15; node++) {
+            if (node < 2 || node == 7 || node == 3){
+                continue;
+            }
+            assertEq(
+                ref.balanceOf(addressList[node])/100,
+                bonusCrownDiamond/100, 
+                "Error balance after bonus"
+            );
+        }
+
+        assertEq(
+                ref.balanceOf(addressList[34])/100,
+                bonusCrownDiamond/100, 
+                "Error balance after bonus"
+        );
+        for (uint256 node = 0; node < 35; node++) {
+            console.log(node+1,ref.balanceOf(addressList[node]));
+        }
+        
+        // Matrix and matching
+        uint256 bonusMatrix = SubFee*25/1000;
+        uint256 f1Rate = 50+10+5+5+3;
+        uint256 f2Rate = 10+5+5+3;
+        uint256 f3Rate = 5+5+3;
+        uint256 f4Rate = 5+3;
+        uint256 f5Rate = 3;
+        assertEq(
+                ref.balanceOf(addressList[33]),
+                bonusMatrix + bonusCrownDiamond,
+                "Error balance after bonus"
+        );
+
+        assertEq(
+                ref.balanceOf(addressList[32]),
+                bonusMatrix + bonusMatrix *(f1Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+
+        assertEq(
+                ref.balanceOf(addressList[31]),
+                bonusMatrix + bonusMatrix *(f1Rate+f2Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+        assertEq(
+                ref.balanceOf(addressList[30]),
+                bonusMatrix + bonusMatrix *(f1Rate+f2Rate+f3Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+        assertEq(
+                ref.balanceOf(addressList[29]),
+                bonusMatrix + bonusMatrix *(f1Rate+f2Rate+f3Rate+f4Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+
+        for(uint256 node = 28; node > 18; node--){
+            assertEq(
+                ref.balanceOf(addressList[node]),
+                bonusMatrix + bonusMatrix *(f1Rate+f2Rate+f3Rate+f4Rate+f5Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+            );
+        }
+        // Only matching
+        assertEq(
+            ref.balanceOf(addressList[18]),
+                bonusMatrix *(f1Rate+f2Rate+f3Rate+f4Rate+f5Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[17]),
+                bonusMatrix *(f2Rate+f3Rate+f4Rate+f5Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[16]),
+                bonusMatrix *(f3Rate+f4Rate+f5Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[15]),
+                bonusMatrix *(f4Rate+f5Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+
+        assertEq(
+            ref.balanceOf(addressList[0]),
+                bonusMatrix *(f5Rate)/100 + bonusCrownDiamond, 
+                "Error balance after bonus"
+        );
+    }
+}

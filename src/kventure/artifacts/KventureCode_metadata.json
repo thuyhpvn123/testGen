@@ -1,0 +1,941 @@
+{
+	"compiler": {
+		"version": "0.8.19+commit.7dd6d404"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "payable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "version",
+						"type": "uint8"
+					}
+				],
+				"name": "Initialized",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string[]",
+						"name": "codeFEs",
+						"type": "string[]"
+					}
+				],
+				"name": "BlockManyCode",
+				"outputs": [
+					{
+						"internalType": "bool[]",
+						"name": "",
+						"type": "bool[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "CalculateCurrentRateBoost",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "planPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "quantity",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "lock",
+						"type": "bool"
+					},
+					{
+						"internalType": "bytes32[]",
+						"name": "codeHashes",
+						"type": "bytes32[]"
+					},
+					{
+						"internalType": "bool",
+						"name": "_cloudMining",
+						"type": "bool"
+					},
+					{
+						"internalType": "address",
+						"name": "_delegate",
+						"type": "address"
+					}
+				],
+				"name": "GenerateCode",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint32",
+						"name": "_page",
+						"type": "uint32"
+					}
+				],
+				"name": "GetMyCode",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "isMore",
+						"type": "bool"
+					},
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "codeHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activeTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expirationActiveTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostSpeed",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rateBoost",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "delegate",
+								"type": "address"
+							},
+							{
+								"internalType": "enum PackageStatus",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "string",
+								"name": "origin",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "mintedAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "releasePercentage",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lockTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "keyHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "currentDeposit",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct PackageInfo[]",
+						"name": "arrayPack",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "GetTotalMyCode",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint32",
+						"name": "_page",
+						"type": "uint32"
+					},
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "GetUserCode",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "isMore",
+						"type": "bool"
+					},
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "codeHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activeTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expirationActiveTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostSpeed",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rateBoost",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "delegate",
+								"type": "address"
+							},
+							{
+								"internalType": "enum PackageStatus",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "string",
+								"name": "origin",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "mintedAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "releasePercentage",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lockTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "keyHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "currentDeposit",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct PackageInfo[]",
+						"name": "arrayPack",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "KCodePrice",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "codeHash",
+						"type": "bytes32"
+					}
+				],
+				"name": "KGenerateCode",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_cloudMiningThreshold",
+						"type": "uint256"
+					}
+				],
+				"name": "SetCloudMiningThreshold",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_masterPool",
+						"type": "address"
+					}
+				],
+				"name": "SetMasterPool",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_nft",
+						"type": "address"
+					}
+				],
+				"name": "SetNFT",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_product",
+						"type": "address"
+					}
+				],
+				"name": "SetProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_usdt",
+						"type": "address"
+					}
+				],
+				"name": "SetUsdt",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string[]",
+						"name": "codeFEs",
+						"type": "string[]"
+					}
+				],
+				"name": "UnblockManyCode",
+				"outputs": [
+					{
+						"internalType": "bool[]",
+						"name": "",
+						"type": "bool[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "boostSpeedDecimal",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "codePool",
+				"outputs": [
+					{
+						"internalType": "contract ICodePool",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "deployedDate",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "codeHash",
+						"type": "bytes32"
+					}
+				],
+				"name": "getCodeInfoSmC",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "codeHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "activeTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "expirationActiveTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostSpeed",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "boostTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "rateBoost",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "delegate",
+								"type": "address"
+							},
+							{
+								"internalType": "enum PackageStatus",
+								"name": "status",
+								"type": "uint8"
+							},
+							{
+								"internalType": "string",
+								"name": "origin",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "mintedAmount",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "releasePercentage",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lockTime",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "keyHash",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "currentDeposit",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct PackageInfo",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_trustedUSDT",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_masterPool",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_codePool",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_product",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_trustedNFT",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_kventure",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "kventure",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mIdToPro",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "imgUrl",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "memberPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "retailPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "desc",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bool",
+						"name": "active",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mValidMiningTime",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "masterPool",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nft",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "product",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rateBoost",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "returnRIP",
+				"outputs": [
+					{
+						"internalType": "uint32",
+						"name": "",
+						"type": "uint32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "usdt",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "usdtDecimal",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"events": {
+				"Initialized(uint8)": {
+					"details": "Triggered when the contract has been initialized or reinitialized."
+				}
+			},
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"GenerateCode.sol": "KventureCode"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts-upgradeable@v4.9.0/access/OwnableUpgradeable.sol": {
+			"keccak256": "0x4075622496acc77fd6d4de4cc30a8577a744d5c75afad33fdeacf1704d6eda98",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://99c8cb3cd19a44bbfb6612605affb7d8b06cee1f6aa9362a37a8672b4f7eeaf8",
+				"dweb:/ipfs/QmasyxFDBUp7k5KFgfDWEzM8PYSKEq7GVznzMJ1VxVRF4B"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable@v4.9.0/proxy/utils/Initializable.sol": {
+			"keccak256": "0x89be10e757d242e9b18d5a32c9fbe2019f6d63052bbe46397a430a1d60d7f794",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f103ee2e4aecd37aac6ceefe670709cdd7613dee25fa2d4d9feaf7fc0aaa155e",
+				"dweb:/ipfs/QmRiNZLoJk5k3HPMYGPGjZFd2ke1ZxjhJZkM45Ec9GH9hv"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable@v4.9.0/utils/AddressUpgradeable.sol": {
+			"keccak256": "0x9c80f545915582e63fe206c6ce27cbe85a86fc10b9cd2a0e8c9488fb7c2ee422",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://310136ad60820af4177a11a61d77a3686faf5fca4942b600e08fc940db38396b",
+				"dweb:/ipfs/QmbCzMNSTL7Zi7M4UCSqBrkHtp4jjxUnGbkneCZKdR1qeq"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable@v4.9.0/utils/ContextUpgradeable.sol": {
+			"keccak256": "0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d6520943ea55fdf5f0bafb39ed909f64de17051bc954ff3e88c9e5621412c79c",
+				"dweb:/ipfs/QmWZ4rAKTQbNG2HxGs46AcTXShsVytKeLs7CUCdCSv5N7a"
+			]
+		},
+		"@openzeppelin/contracts@v4.9.0/token/ERC20/IERC20.sol": {
+			"keccak256": "0x287b55befed2961a7eabd7d7b1b2839cbca8a5b80ef8dcbb25ed3d4c2002c305",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://bd39944e8fc06be6dbe2dd1d8449b5336e23c6a7ba3e8e9ae5ae0f37f35283f5",
+				"dweb:/ipfs/QmPV3FGYjVwvKSgAXKUN3r9T9GwniZz83CxBpM7vyj2G53"
+			]
+		},
+		"AbstractPackage.sol": {
+			"keccak256": "0x53db02a584d2470160cabb302196748f86b7cbbd8abbc989af2be325ed3c2983",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3d95df44b5ec419884144d1195bbf20e32694cb053b92f19f4fed33829702c35",
+				"dweb:/ipfs/QmZjs5gX8UjVpgDhriQPHYiewkGAWoXLSimKZcg87ZC5Na"
+			]
+		},
+		"GenerateCode.sol": {
+			"keccak256": "0x2c76eb751ae889c4282e128bf02471c430134855c217b27cfae671b85b97b1f3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://523e274eb996b53814e0b1f028e1a6ccd0a41cda02260dfd0f54b14ddaf42ef0",
+				"dweb:/ipfs/QmeMj5LuZa5TK6sH1y6vV4KtZX7Bj5L3wr3qLM4nR2PkRJ"
+			]
+		}
+	},
+	"version": 1
+}

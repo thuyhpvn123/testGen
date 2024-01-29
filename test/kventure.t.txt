@@ -1,0 +1,174 @@
+pragma solidity 0.8.19;
+import "forge-std/Test.sol";
+// import {console} from "forge-std/console.sol";
+import {KVenture} from "../src/kventure/kventure.sol";
+import {MasterPool} from "../src/kventure/MasterPool.sol";
+import {USDT} from "../src/kventure/USDT.sol";
+import {BinaryTree} from "../src/kventure/BinaryTree.sol";
+import {KventureCode} from "../src/kventure/GenerateCode.sol";
+import {Product} from "../src/kventure/Product.sol";
+import {KventureNft} from "../src/kventure/PackageNFT.sol";
+
+contract KventureTest is Test{
+    KVenture public kventure;
+    MasterPool public masterPool;
+    KventureCode public kVentureCode;
+    USDT public usdt;
+    BinaryTree public binarytree;
+    Product public product;
+    KventureNft public nft;
+    address public deployer = address(0x123456);
+    address public root = address(0x1234567);
+    address public wallet = address(0x12345678);
+    address public partnerWallet = address(0x123456789);
+    bytes32 public codeRoot;
+    address public minter = address(0x123);
+    address public boostStorage = address(0x124);
+
+    //branch 1
+    address [] public level1;
+    bytes32 [] refcodeLevel1;
+    address [] public level2;
+    bytes32 [] refcodeLevel2;
+    address [] public level3;
+    bytes32 [] refcodeLevel3;
+    bytes32 phone= bytes32(0x40948b0de70ef650857db7858448d3981a2be2d06b40551427eefe1b1f956f31);
+    bytes32 [] refcode;
+    address [] public addressList;
+    //3-6-16
+    // constructor(){
+    //     initAddressList();
+    // }
+    function setUp()public{
+        vm.startPrank(deployer);
+        kventure = new KVenture();
+        usdt = new USDT();
+        masterPool = new MasterPool(address(usdt));
+        binarytree = new BinaryTree();
+        kVentureCode = new KventureCode();
+        nft = new KventureNft();
+        product = new Product();
+        vm.stopPrank();
+        initAddressList();
+
+        vm.startPrank(deployer);
+        kventure.initialize(address(usdt),address(masterPool),address(binarytree),root,wallet,partnerWallet,address(kVentureCode));
+        masterPool.setController(address(kventure));        
+        masterPool.setController(address(product));
+        kVentureCode.initialize(address(usdt),address(masterPool),address(minter),address(boostStorage),address(product),address(nft),address(kVentureCode));
+        bytes32  MINTER_ROLE = keccak256("MINTER_ROLE");
+        nft.grantRole(MINTER_ROLE,address(kVentureCode));
+        product.initialize(address(usdt),address(masterPool),address(kVentureCode),address(kventure));
+        mintToList();
+        vm.stopPrank();
+        getRefCodeRoot();
+        Register();
+        // vm.startPrank(deployer);
+        // usdt.mintToAddress(address(masterPool),10**20);
+        // kventure.InitNode();
+        vm.stopPrank();
+        // Register1();
+    }
+    function initAddressList() internal {
+        for (uint256 index = 0; index < 3; index++) { //1-3
+            level1.push(vm.addr(index+1));
+            addressList.push(vm.addr(index+1));
+            
+        }
+        console.log("level1:",level1.length);
+
+        uint bl=level1[0].balance;
+        console.log("balance:",bl);
+        for (uint256 index = 0; index < 9; index++) { //4-12
+            level2.push(vm.addr(index+4));
+            addressList.push(vm.addr(index+4));
+        }   
+        console.log("level2:",level2.length);       
+        for (uint256 index = 0; index < 27; index++) { //13-39
+            level3.push(vm.addr(index+13));
+            addressList.push(vm.addr(index+13));
+        }
+        console.log("level3:",level3.length);
+        console.log("addressList:",addressList.length);
+        for(uint256 i=0;i<addressList.length;i++){
+            vm.deal(addressList[i],100 ether);
+            vm.startPrank(addressList[i]);
+            // uint bl1=addressList[0].balance;
+            usdt.approve(address(kventure),100000000000000000000000);
+            vm.stopPrank();
+        }
+    }
+    function mintToList() public{
+        for(uint256 i=0;i<addressList.length;i++){
+            // vm.startPrank(deployer);
+            usdt.mintToAddress(addressList[i], 1 * 10 ** 20);
+            // vm.stopPrank();
+        }
+    }
+    function getRefCodeRoot() public {
+        vm.startPrank(root);
+        codeRoot = kventure.GetCodeRef();
+        vm.stopPrank();
+    }
+    function Register() public {
+        console.log("level1:",level1.length);
+        for (uint256 i=0;i<3;i++){
+            vm.startPrank(level1[i]);
+            console.log("level1:",level1[i]);
+            kventure.Register(phone,codeRoot,0,bytes32(0));
+            bytes32 coderef1 = kventure.GetCodeRef(); 
+            console.log("coderef1----------------");
+            console.logBytes32(coderef1);          
+            refcodeLevel1.push(coderef1);
+            // refcodeLevel1.push(coderef1);
+            // refcodeLevel1.push(coderef1);
+            vm.stopPrank();
+        }
+        for (uint256 i=0;i<3;i++){
+            for (uint256 j=0;j<3;j++){
+                vm.startPrank(level2[i*3+j]);
+                console.log("level2----------:",level2[i*3+j]);
+                console.logBytes32(refcodeLevel1[i]);          
+
+                kventure.Register(phone,refcodeLevel1[i],0,bytes32(0));
+                bytes32 coderef2 = kventure.GetCodeRef();           
+                refcodeLevel2.push(coderef2);
+                vm.stopPrank();
+            }
+        }
+
+        
+        for (uint256 i=0;i<9;i++){
+            for (uint j=0;j<3;j++){
+                vm.startPrank(level3[i*3+j]);
+                console.log("level3:",level3[i*3+j]);
+                kventure.Register(phone,refcodeLevel2[i],0,bytes32(0));
+                bytes32 coderef3 = kventure.GetCodeRef();           
+                refcodeLevel3.push(coderef3);
+                vm.stopPrank();
+            }
+        }
+        
+    }
+    function testGetTotalActive() public{
+        console.log("ok");
+        // uint total = kventure.getTotalActive();
+        // console.log("total:",total);
+        // // kventure.setNextTimePay(level2[0]);
+        // uint256 currentTimestamp = block.timestamp;
+        // uint256 timestampAfter30Days = currentTimestamp + (40 days);
+        // skip(timestampAfter30Days);
+        // vm.startPrank(deployer);
+        // kventure.updateRankDaily();
+        // vm.stopPrank();
+        // uint total1 = kventure.getTotalActive();
+        // console.log("total1:",total1);
+    }
+    function testDirectBonus()public{
+        assertEq()
+    }
+0x40948b0de70ef650857db7858448d3981a2be2d06b40551427eefe1b1f956f31
+0x0000000000000000000000000000000000000000000000000000000000000000
+
+}
+
