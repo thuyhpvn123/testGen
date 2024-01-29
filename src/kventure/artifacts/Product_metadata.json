@@ -1,0 +1,1310 @@
+{
+	"compiler": {
+		"version": "0.8.19+commit.7dd6d404"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "payable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint8",
+						"name": "version",
+						"type": "uint8"
+					}
+				],
+				"name": "Initialized",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "orderId",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32[]",
+						"name": "productIds",
+						"type": "bytes32[]"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256[]",
+						"name": "quantities",
+						"type": "uint256[]"
+					}
+				],
+				"name": "SaleOrder",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_admin",
+						"type": "address"
+					}
+				],
+				"name": "SetAdmin",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_kventureCode",
+						"type": "address"
+					}
+				],
+				"name": "SetKventureCode",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_masterPool",
+						"type": "address"
+					}
+				],
+				"name": "SetMasterPool",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_kventure",
+						"type": "address"
+					}
+				],
+				"name": "SetRef",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_usdt",
+						"type": "address"
+					}
+				],
+				"name": "SetUsdt",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_imgUrl",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_memberPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_retailPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_desc",
+						"type": "string"
+					},
+					{
+						"internalType": "bool",
+						"name": "_status",
+						"type": "bool"
+					}
+				],
+				"name": "adminAddProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "idProduct",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_newImgUrl",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_newDesc",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bool",
+						"name": "_newStatus",
+						"type": "bool"
+					}
+				],
+				"name": "adminUpdateProduct",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "adminViewProduct",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes",
+								"name": "imgUrl",
+								"type": "bytes"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes",
+								"name": "desc",
+								"type": "bytes"
+							},
+							{
+								"internalType": "bool",
+								"name": "active",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.Product[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_id",
+						"type": "bytes32"
+					}
+				],
+				"name": "findProductIndexById",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "getNftDetail",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes",
+								"name": "imgUrl",
+								"type": "bytes"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes",
+								"name": "desc",
+								"type": "bytes"
+							},
+							{
+								"internalType": "bool",
+								"name": "active",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.Product",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "orderId",
+						"type": "bytes32"
+					}
+				],
+				"name": "getOrderInfoById",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "address",
+								"name": "buyer",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes32[]",
+								"name": "productIds",
+								"type": "bytes32[]"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "quantities",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "creatAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "tokenIds",
+								"type": "uint256[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "string",
+										"name": "fullname",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "add",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "phone",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "zipcode",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "email",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "receivingTime",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct PackageInfoStruct.ShippingInfo",
+								"name": "shipInfo",
+								"type": "tuple"
+							},
+							{
+								"internalType": "address",
+								"name": "paymentAdd",
+								"type": "address"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.Order",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "page",
+						"type": "uint256"
+					}
+				],
+				"name": "getOrdersInfo",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "isMore",
+						"type": "bool"
+					},
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "address",
+								"name": "buyer",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes32[]",
+								"name": "productIds",
+								"type": "bytes32[]"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "quantities",
+								"type": "uint256[]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "creatAt",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256[]",
+								"name": "tokenIds",
+								"type": "uint256[]"
+							},
+							{
+								"components": [
+									{
+										"internalType": "string",
+										"name": "fullname",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "add",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "phone",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "zipcode",
+										"type": "string"
+									},
+									{
+										"internalType": "string",
+										"name": "email",
+										"type": "string"
+									},
+									{
+										"internalType": "uint256",
+										"name": "receivingTime",
+										"type": "uint256"
+									}
+								],
+								"internalType": "struct PackageInfoStruct.ShippingInfo",
+								"name": "shipInfo",
+								"type": "tuple"
+							},
+							{
+								"internalType": "address",
+								"name": "paymentAdd",
+								"type": "address"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.Order[]",
+						"name": "orderList",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_id",
+						"type": "bytes32"
+					}
+				],
+				"name": "getProductById",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes",
+								"name": "imgUrl",
+								"type": "bytes"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes",
+								"name": "desc",
+								"type": "bytes"
+							},
+							{
+								"internalType": "bool",
+								"name": "active",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.Product",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_orderId",
+						"type": "bytes32"
+					}
+				],
+				"name": "getShipInfo",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "fullname",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "add",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "phone",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "zipcode",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "email",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "receivingTime",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.ShippingInfo",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_trustedUSDT",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_masterPool",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_kventureCode",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_ref",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "isAdmin",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "kventureCode",
+				"outputs": [
+					{
+						"internalType": "contract KventureCode",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenIdNft",
+						"type": "uint256"
+					}
+				],
+				"name": "mIdToPro",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "imgUrl",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "memberPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "retailPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "desc",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bool",
+						"name": "active",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "idOrder",
+						"type": "bytes32"
+					}
+				],
+				"name": "mOrder",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "buyer",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "creatAt",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "fullname",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "add",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "phone",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "zipcode",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "email",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "receivingTime",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.ShippingInfo",
+						"name": "shipInfo",
+						"type": "tuple"
+					},
+					{
+						"internalType": "address",
+						"name": "paymentAdd",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "mOrderArr",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "idProduct",
+						"type": "bytes32"
+					}
+				],
+				"name": "mProduct",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "imgUrl",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "memberPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "retailPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "desc",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bool",
+						"name": "active",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "masterPool",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32[]",
+						"name": "idArr",
+						"type": "bytes32[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "quaArr",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "bool[]",
+						"name": "lockArr",
+						"type": "bool[]"
+					},
+					{
+						"internalType": "bytes32[][]",
+						"name": "codeHashes",
+						"type": "bytes32[][]"
+					},
+					{
+						"internalType": "address[]",
+						"name": "delegates",
+						"type": "address[]"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "codeRef",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					}
+				],
+				"name": "order",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "products",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "id",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "imgUrl",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "memberPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "retailPrice",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "desc",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bool",
+						"name": "active",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "ref",
+				"outputs": [
+					{
+						"internalType": "contract KVenture",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "returnRIP",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_orderId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "string",
+						"name": "_fullname",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_add",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_phone",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_zipcode",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_email",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_receivingTime",
+						"type": "uint256"
+					}
+				],
+				"name": "shippingInfo",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalProduct",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "usdt",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "userViewProduct",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "bytes32",
+								"name": "id",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes",
+								"name": "imgUrl",
+								"type": "bytes"
+							},
+							{
+								"internalType": "uint256",
+								"name": "memberPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "retailPrice",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes",
+								"name": "desc",
+								"type": "bytes"
+							},
+							{
+								"internalType": "bool",
+								"name": "active",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct PackageInfoStruct.Product[]",
+						"name": "",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"events": {
+				"Initialized(uint8)": {
+					"details": "Triggered when the contract has been initialized or reinitialized."
+				}
+			},
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Product.sol": "Product"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts-upgradeable@v4.9.0/access/OwnableUpgradeable.sol": {
+			"keccak256": "0x4075622496acc77fd6d4de4cc30a8577a744d5c75afad33fdeacf1704d6eda98",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://99c8cb3cd19a44bbfb6612605affb7d8b06cee1f6aa9362a37a8672b4f7eeaf8",
+				"dweb:/ipfs/QmasyxFDBUp7k5KFgfDWEzM8PYSKEq7GVznzMJ1VxVRF4B"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable@v4.9.0/proxy/utils/Initializable.sol": {
+			"keccak256": "0x89be10e757d242e9b18d5a32c9fbe2019f6d63052bbe46397a430a1d60d7f794",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f103ee2e4aecd37aac6ceefe670709cdd7613dee25fa2d4d9feaf7fc0aaa155e",
+				"dweb:/ipfs/QmRiNZLoJk5k3HPMYGPGjZFd2ke1ZxjhJZkM45Ec9GH9hv"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable@v4.9.0/utils/AddressUpgradeable.sol": {
+			"keccak256": "0x9c80f545915582e63fe206c6ce27cbe85a86fc10b9cd2a0e8c9488fb7c2ee422",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://310136ad60820af4177a11a61d77a3686faf5fca4942b600e08fc940db38396b",
+				"dweb:/ipfs/QmbCzMNSTL7Zi7M4UCSqBrkHtp4jjxUnGbkneCZKdR1qeq"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable@v4.9.0/utils/ContextUpgradeable.sol": {
+			"keccak256": "0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d6520943ea55fdf5f0bafb39ed909f64de17051bc954ff3e88c9e5621412c79c",
+				"dweb:/ipfs/QmWZ4rAKTQbNG2HxGs46AcTXShsVytKeLs7CUCdCSv5N7a"
+			]
+		},
+		"@openzeppelin/contracts@v4.9.0/access/Ownable.sol": {
+			"keccak256": "0xba43b97fba0d32eb4254f6a5a297b39a19a247082a02d6e69349e071e2946218",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fc980984badf3984b6303b377711220e067722bbd6a135b24669ff5069ef9f32",
+				"dweb:/ipfs/QmPHXMSXj99XjSVM21YsY6aNtLLjLVXDbyN76J5HQYvvrz"
+			]
+		},
+		"@openzeppelin/contracts@v4.9.0/token/ERC20/IERC20.sol": {
+			"keccak256": "0x287b55befed2961a7eabd7d7b1b2839cbca8a5b80ef8dcbb25ed3d4c2002c305",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://bd39944e8fc06be6dbe2dd1d8449b5336e23c6a7ba3e8e9ae5ae0f37f35283f5",
+				"dweb:/ipfs/QmPV3FGYjVwvKSgAXKUN3r9T9GwniZz83CxBpM7vyj2G53"
+			]
+		},
+		"@openzeppelin/contracts@v4.9.0/token/ERC721/IERC721.sol": {
+			"keccak256": "0x5bce51e11f7d194b79ea59fe00c9e8de9fa2c5530124960f29a24d4c740a3266",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7e66dfde185df46104c11bc89d08fa0760737aa59a2b8546a656473d810a8ea4",
+				"dweb:/ipfs/QmXvyqtXPaPss2PD7eqPoSao5Szm2n6UMoiG8TZZDjmChR"
+			]
+		},
+		"@openzeppelin/contracts@v4.9.0/utils/Context.sol": {
+			"keccak256": "0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
+				"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
+			]
+		},
+		"@openzeppelin/contracts@v4.9.0/utils/introspection/IERC165.sol": {
+			"keccak256": "0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f",
+				"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
+			]
+		},
+		"@openzeppelin/contracts@v4.9.0/utils/math/Math.sol": {
+			"keccak256": "0xe4455ac1eb7fc497bb7402579e7b4d64d928b846fce7d2b6fde06d366f21c2b3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://cc8841b3cd48ad125e2f46323c8bad3aa0e88e399ec62acb9e57efa7e7c8058c",
+				"dweb:/ipfs/QmSqE4mXHA2BXW58deDbXE8MTcsL5JSKNDbm23sVQxRLPS"
+			]
+		},
+		"AbstractPackage.sol": {
+			"keccak256": "0x7065b03e9429fe3501cc7a6eb4ea45c13828add173035ffa285e8c7bc60f0cae",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://dee0fe19cf413b83d273e88ced728215289d360338d867d654f1d32f7006b4e7",
+				"dweb:/ipfs/QmNZYknSxVAfAVxDnRoYkV2LdFBWAWF5P6epMA7rD38RaD"
+			]
+		},
+		"GenerateCode.sol": {
+			"keccak256": "0x2744194ac87e3dba78b87c7608d3d57fedf14574e972a026626e25352e77c0df",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c1a340a21dfe6c6cc53800760843184a49516f503066fa4673bb7abd761760ef",
+				"dweb:/ipfs/QmW8StuEFV85MihiJ2Fs2f3MPfsyK1GXAckWaPtK29fx2s"
+			]
+		},
+		"MasterPool.sol": {
+			"keccak256": "0x9a41c8cc45f4d11f2530939c8bbb84354b3b6987f5dde0f850e2a1ad7b8c3951",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5bcbf0b77345f5dc7368120b4bc5ba8ce6316e1359814967e1200603b79b590e",
+				"dweb:/ipfs/QmbFX2rDQRBWFXyJPNygiJeC24kisVF1yMdVd4Uggut8G6"
+			]
+		},
+		"Product.sol": {
+			"keccak256": "0x831117dec84638d59020d9800600af99a5821008f98bffbfacfcf8a1c324b723",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ae81338c8f87fa8f48507d9055409094d9e7fb70d3cdd8c37f7151c3d0db1bab",
+				"dweb:/ipfs/QmNXJU76A1zsHwvVeKJrEs3mndtHVH49sS1RpAuurhnsXr"
+			]
+		},
+		"interfaces/IBinaryTree.sol": {
+			"keccak256": "0xeb53b90ee4a721bdd52bbd60ae319c47efce588ec944fc32116fcefe7a7dac47",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://37350fc1b37898c0f1fd9d588492d1fd2f3951a5f8f075c1879f841ba3aba77a",
+				"dweb:/ipfs/Qmf7yGtWnop7tkCC75iudbuQJ6uBHon8cN1owcwx7SRDP9"
+			]
+		},
+		"kventure.sol": {
+			"keccak256": "0x7168ce5901490d43a2ef76de43af1260ebba371c29ab26490ae0b166d8e4ee44",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2825a6c59c00077317c2d86807fbb37791de3df9f56ad616f7ba7f313521319f",
+				"dweb:/ipfs/QmeSLSE4vH8kz4VCwXoFw8YF1dMERqYYn5aghfGWXTJ8Ym"
+			]
+		}
+	},
+	"version": 1
+}

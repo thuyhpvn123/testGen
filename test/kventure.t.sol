@@ -9,6 +9,8 @@ import {KventureCode} from "../src/kventure/GenerateCode.sol";
 import {Product} from "../src/kventure/Product.sol";
 import {KventureNft} from "../src/kventure/PackageNFT.sol";
 import {PackageInfoStruct} from "../src/kventure/AbstractPackage.sol";
+import {Code} from "../src/kventure/interfaces/ICode.sol";
+import {CodePool} from "../src/kventure/codepool.sol";
 contract KventureTest is Test{
     KVenture public kventure;
     MasterPool public masterPool;
@@ -17,24 +19,18 @@ contract KventureTest is Test{
     BinaryTree public binarytree;
     Product public product;
     KventureNft public nft;
+    CodePool public codePool;
     address public deployer = address(0x123456);
     address public root = address(0x1);
     address public wallet = address(0x12345678);
     address public partnerWallet = address(0x123456789);
     address public mtn = address(0x12345);
     bytes32 public codeRoot;
-    address public minter = address(0x123);
-    address public boostStorage = address(0x124);
-
+    // address public minter = address(0x123);
+    // address public boostStorage = address(0x124);
+    
     //branch 1
-    address [] public level1;
-    bytes32 [] refcodeLevel1;
-    address [] public level2;
-    bytes32 [] refcodeLevel2;
-    address [] public level3;
-    bytes32 [] refcodeLevel3;
     bytes32 phone= bytes32(0x40948b0de70ef650857db7858448d3981a2be2d06b40551427eefe1b1f956f31);
-    bytes32 [] refcode;
     address [] public addressList;
     uint256 USDT_AMOUNT = 1_000_000;
     bytes32 code0xb6;
@@ -51,11 +47,14 @@ contract KventureTest is Test{
         kVentureCode = new KventureCode();
         nft = new KventureNft();
         product = new Product();
+        codePool = new CodePool();
+        bytes32  PC_CON = keccak256("POOL_CODE_CONTROLLER_ROLE");
+        codePool.grantRole(PC_CON,address(kVentureCode));
         kventure.initialize(address(usdt),address(masterPool),address(binarytree),root,wallet,partnerWallet,address(kVentureCode),address(mtn));
         kventure.SetPackageController(address(product));
         masterPool.setController(address(kventure));        
         masterPool.setController(address(product));
-        kVentureCode.initialize(address(usdt),address(masterPool),address(minter),address(boostStorage),address(product),address(nft),address(kventure));
+        kVentureCode.initialize(address(usdt),address(masterPool),address(codePool),address(product),address(nft),address(kventure));
         bytes32  MINTER_ROLE = keccak256("MINTER_ROLE");
         nft.grantRole(MINTER_ROLE,address(kVentureCode));
         product.initialize(address(usdt),address(masterPool),address(kVentureCode),address(kventure));
@@ -233,6 +232,19 @@ contract KventureTest is Test{
 
     }
     function testPayBonus()public{
+        /*
+        Input: 
+        - Buyer is Member 
+        - Product: 100_000 USDT 
+        - Quantity: 1
+        - Total Payment: 100_000 USDT
+
+        Output: 
+        - Receive: 1 code, 1 NFT
+        - ParnerWallet Receive:  USDT 
+        - Corporation Wallet: 
+        - Wallet Buyer is decreased 50_000 USDT
+        */
         //admin add product
         vm.startPrank(deployer);
         product.adminAddProduct("a",100_000*USDT_AMOUNT,122_008*USDT_AMOUNT,"ao",true);
@@ -297,18 +309,16 @@ contract KventureTest is Test{
         cloudMinings[0]=false;
         address[] memory delegates = new address[](1);
         delegates[0]=address(0);
-        console.log("balance 0xb11:",usdt.balanceOf(address(0xb11)));
 
         kventure.UpdateRank(root,5); //set rank de root du dk rank nhan sale bonus
         kventure.UpdateRank(address(0x8),3); //set rank de 0x8 du dk rank nhan sale bonus
-        product.order(idArr,quaArr,lockArr,codeHashes,cloudMinings,delegates,code0xb11,address(0xb12));
+        product.order(idArr,quaArr,lockArr,codeHashes,delegates,code0xb11,address(0xb12));
         vm.stopPrank();      
         assertEq(
             usdt.balanceOf(address(0xb12)),
             0,
             "Error balance "
         ); 
-        console.log("linematrix:",usdt.balanceOf(address(0xb11)));
 
         //test sale bonus
         assertEq(
@@ -325,7 +335,7 @@ contract KventureTest is Test{
         
         assertEq(
             kventure.GetUserInfo(root).totalSaleBonus, //(122_008-100_000)*1%
-            2200800000,
+            220080000,
             "Error balance "
         ); 
 
@@ -339,64 +349,17 @@ contract KventureTest is Test{
         //     "Error balance "
         // );
 
-        
+        //test GenerateCode
+        // Check Code Info
+        Code memory code = kVentureCode.getCodeInfoSmC(codeHash[0]);
+        assertEq(code.owner, address(0xb12), "testBuyProduct_1 - Code Owner");
+          // Check Product Info
+        PackageInfoStruct.Product memory productInfo = product.getNftDetail(
+            uint(codeHash[0])
+        );
+        assertEq(productInfo.id, idArr[0], "Err product info - id");
+        assertEq(productInfo.memberPrice, 100_000*USDT_AMOUNT, "Err product info - price");
     }
-    // function testPayBonus()public{
-    //     //admin add product
-    //     vm.startPrank(deployer);
-    //     product.adminAddProduct("a",5000*USDT_AMOUNT,6108*USDT_AMOUNT,"ao",true);
-    //     usdt.mintToAddress(address(0xb12), 10000*USDT_AMOUNT);
-    //     usdt.mintToAddress(address(0xb11), 50*USDT_AMOUNT);
-    //     usdt.mintToAddress(address(masterPool), 500000000000000000*USDT_AMOUNT);
-    //     PackageInfoStruct.Product [] memory ProductArr = new PackageInfoStruct.Product[](1);
-    //     ProductArr = product.adminViewProduct();
-
-    //     vm.stopPrank();
-    //             //b11 register
-    //     uint256 fee = 50*USDT_AMOUNT;
-    //     vm.startPrank(address(0xb11));
-    //     usdt.approve(address(kventure),fee);
-    //     kventure.Register(phone,codeRoot,0,bytes32(0),address(0xb11));
-    //     bytes32 code0xb11 = kventure.GetCodeRef();
-    //     vm.stopPrank();
-    //     assertEq(
-    //         usdt.balanceOf(address(0xb11)),
-    //         0,
-    //         "Error balance "
-    //     );
-
-    //     //address 0xb12 order 
-    //     vm.startPrank(address(0xb12));
-    //     usdt.approve(address(product),10000*USDT_AMOUNT);
-
-    //     bytes32[] memory idArr = new bytes32[](1);
-    //     idArr[0] = ProductArr[0].id;
-    //     uint256[] memory quaArr = new uint256[](1);
-    //     quaArr[0]=1;
-    //     bool[] memory lockArr = new bool[](1);
-    //     lockArr[0]=false;
-    //     bytes32[] memory codeHash = new bytes32[](1);
-    //     codeHash[0] = bytes32("234");
-    //     bytes32[][] memory codeHashes = new bytes32[][](1);
-    //     codeHashes[0] = codeHash;
-    //     bool[] memory cloudMinings = new bool[](1);
-    //     cloudMinings[0]=false;
-    //     address[] memory delegates = new address[](1);
-    //     delegates[0]=address(0);
-
-    //     product.order(idArr,quaArr,lockArr,codeHashes,cloudMinings,delegates,code0xb11,address(0xb12));
-    //     vm.stopPrank();
-    //     assertEq(
-    //         usdt.balanceOf(address(0xb12)),
-    //         (10000*USDT_AMOUNT-6108*USDT_AMOUNT*92/100),
-    //         "Error balance "
-    //     ); 
-    //     assertEq(
-    //         kventure.GetUserInfo(address(0xb11)).totalCareerBonus,
-    //         110800000,
-    //         "Error balance "
-    //     ); 
-
-  
-    // }
+       
+    
 }

@@ -1,32 +1,29 @@
 //SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
-    struct PackageInfo {
-        address owner;
-        bytes32 codeHash;
-        uint256 activeTime; // Expiration time = activeTime + boostTime
-        uint256 expirationActiveTime;
-        uint256 boostSpeed; // 2 Decimal => Remember to divide 100
-        uint256 boostTime;
-        uint256 rateBoost;
-        address delegate;
-        PackageStatus status;
-        string origin; //value: MTI || KVENTURE
-        uint256 mintedAmount;
-        uint256 releasePercentage; // releasePercent of mintedAmount (100 - LockRate)
-        uint256 lockTime;
-        bytes32 keyHash; // Pass (Device Generate) == (Keccak256) ==> PassHash (bytes32) => Send PassHash to Smart Contract
-        uint256 currentDeposit;
-    }
-    enum PackageStatus {
-        Block,
-        Unblock,
-        Active,
-        Expired
-    }
+    // struct Code {
+    //     address owner;
+    //     bytes32 codeHash;
+    //     uint256 activeTime; // Expiration time = activeTime + boostTime
+    //     uint256 expirationActiveTime;
+    //     uint256 boostSpeed; // 2 Decimal => Remember to divide 100
+    //     uint256 boostTime;
+    //     uint256 rateBoost;
+    //     address delegate;
+    //     PackageStatus status;
+    //     string origin; //value: MTI || KVENTURE
+    //     uint256 mintedAmount;
+    //     uint256 releasePercentage; // releasePercent of mintedAmount (100 - LockRate)
+    //     uint256 lockTime;
+    //     bytes32 keyHash; // Pass (Device Generate) == (Keccak256) ==> PassHash (bytes32) => Send PassHash to Smart Contract
+    //     uint256 currentDeposit;
+    // }
+    // enum PackageStatus {
+    //     Block,
+    //     Unblock,
+    //     Active,
+    //     Expired
+    // }
 abstract contract PackageInfoStruct {
-
-
-
     struct Product{
         bytes32 id;
         bytes imgUrl;

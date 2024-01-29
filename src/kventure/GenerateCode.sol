@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
+import "./codepool.sol";
 import "@openzeppelin/contracts@v4.9.0/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable@v4.9.0/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable@v4.9.0/proxy/utils/Initializable.sol";
 import "./AbstractPackage.sol";
-// import {PackageInfo} from "./AbstractPackage.sol";
+// import {Code} from "./AbstractPackage.sol";
+import "./interfaces/ICode.sol";
+import "forge-std/Test.sol";
+
 interface INFT {
     function balanceOf(address owner) external view returns (uint256 balance);
     function safeMint(address to, uint256 tokenId) external;
@@ -13,54 +17,54 @@ interface INFT {
     function ownerOf(uint256 tokenId) external view returns (address owner);
 }
 
-interface ICodePool {
-    function addCode(PackageInfo memory code) external returns (bool);
+// interface ICodePool {
+//     function addCode(Code memory code) external returns (bool);
 
-    function getCodeInfo(bytes32 codeHash) external returns (PackageInfo memory);
+//     function getCodeInfo(bytes32 codeHash) external returns (Code memory);
 
-    function burnCode(bytes32 codeHash) external returns (bool);
+//     function burnCode(bytes32 codeHash) external returns (bool);
 
-    function updateCode(PackageInfo memory updatedCode) external returns (bool);
+//     function updateCode(Code memory updatedCode) external returns (bool);
 
-    function activateCode(
-        string memory codeStr,
-        address activator
-    ) external returns (bool);
+//     function activateCode(
+//         string memory codeStr,
+//         address activator
+//     ) external returns (bool);
 
-    function blockCode(
-        address caller,
-        bytes32[] memory codeHash
-    ) external returns (bool[] memory);
+//     function blockCode(
+//         address caller,
+//         bytes32[] memory codeHash
+//     ) external returns (bool[] memory);
 
-    function unblockCode(
-        address caller,
-        bytes32[] memory codeHash
-    ) external returns (bool[] memory);
+//     function unblockCode(
+//         address caller,
+//         bytes32[] memory codeHash
+//     ) external returns (bool[] memory);
 
-    function updateExpiredCode(bytes32 codeHash) external returns (bool);
+//     function updateExpiredCode(bytes32 codeHash) external returns (bool);
 
-    function updateCodeWalletKey(
-        address caller,
-        bytes32 codeHash,
-        string calldata rawKey,
-        bytes32 newKeyHash
-    ) external returns (bool);
+//     function updateCodeWalletKey(
+//         address caller,
+//         bytes32 codeHash,
+//         string calldata rawKey,
+//         bytes32 newKeyHash
+//     ) external returns (bool);
 
-    function unlockCodeWalletKey(
-        address caller,
-        bytes32 codeHash,
-        string calldata rawKey
-    ) external returns (bool);
+//     function unlockCodeWalletKey(
+//         address caller,
+//         bytes32 codeHash,
+//         string calldata rawKey
+//     ) external returns (bool);
 
-    function setCodeLockTime(
-        address caller,
-        bytes32 codeHash,
-        uint256 newLockTime,
-        uint256 lockRate
-    ) external returns (bool);
+//     function setCodeLockTime(
+//         address caller,
+//         bytes32 codeHash,
+//         uint256 newLockTime,
+//         uint256 lockRate
+//     ) external returns (bool);
 
-    function getCodeList(address caller) external returns (PackageInfo[] memory codes);
-}
+//     function getCodeList(address caller) external returns (Code[] memory codes);
+// }
 
 contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
     uint public rateBoost = 1 * usdtDecimal; // 1$ = 1%;
@@ -68,7 +72,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
     uint256 public boostSpeedDecimal = 10 ** 2;
     uint256 public KCodePrice = usdtDecimal * 30;
     uint32 public returnRIP = 10;
-    mapping(bytes32 => PackageInfo) mPackageInfo;
+    mapping(bytes32 => Code) mPackageInfo;
     // mapping(uint256 => SubscriptionType) public mValidType;
     mapping(uint256 => uint256) public mValidMiningTime;
     uint256 cloudMiningThreshold;
@@ -76,7 +80,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
     uint public deployedDate;
 
     address public usdt;
-    ICodePool public codePool;
+    CodePool public codePool;
     address public masterPool;
     address public nft;
     address public kventure;
@@ -98,7 +102,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
         usdt = _trustedUSDT;
         masterPool = _masterPool;
         // minter = IMinterSmC(_minter);
-        codePool = ICodePool(_codePool);
+        codePool = CodePool(_codePool);
         kventure = _kventure;
         product = _product;
         nft = _trustedNFT;
@@ -190,7 +194,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
         uint quantity,
         bool lock,
         bytes32[] calldata codeHashes,
-        bool _cloudMining,
+        // bool _cloudMining,
         address _delegate
         // bytes32 codeRef
     ) external onlyProduct returns (uint[] memory) {
@@ -221,7 +225,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
                 lock,
                 planPrice,
                 currentRateBoost,
-                _cloudMining,
+                // _cloudMining,
                 _delegate
             );
             codes[i]=code;
@@ -241,7 +245,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
             false,
             KCodePrice,
             CalculateCurrentRateBoost(),
-            false,
+            // false,
             address(0)
         );
         return true;
@@ -253,7 +257,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
         bool _lock,
         uint _planPrice,
         uint _rateBoost,
-        bool _cloudMining,
+        // bool _cloudMining,
         address _delegate
     ) internal returns(uint){
         require(
@@ -276,7 +280,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
         //     cloudMining: _cloudMining,
         //     delegate: _delegate
         // });
-        mPackageInfo[codeHash] = PackageInfo({
+        mPackageInfo[codeHash] = Code({
             owner: buyer,
             codeHash: codeHash,
             activeTime: 0,
@@ -312,11 +316,11 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
             codeHash = keccak256(abi.encodePacked(codeFEs[index]));
             if (
                 msg.sender != mPackageInfo[codeHash].owner ||
-                mPackageInfo[codeHash].status == PackageStatus.Unblock
+                mPackageInfo[codeHash].status == Status.Unblock
             ) {
                 continue;
             }
-            mPackageInfo[codeHash].status = PackageStatus.Unblock;
+            mPackageInfo[codeHash].status = Status.Unblock;
             success[index] = true;
         }
         return success;
@@ -331,23 +335,23 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
             codeHash = keccak256(abi.encodePacked(codeFEs[index]));
             if (
                 msg.sender != mPackageInfo[codeHash].owner ||
-                mPackageInfo[codeHash].status == PackageStatus.Block
+                mPackageInfo[codeHash].status == Status.Block
             ) {
                 continue;
             }
-            mPackageInfo[codeHash].status = PackageStatus.Block;
+            mPackageInfo[codeHash].status = Status.Block;
             success[index] = true;
         }
         return success;
     }
 
-    function _isBlock(bool lock) internal pure returns (PackageStatus) {
-        return lock ? PackageStatus.Block : PackageStatus.Unblock;
+    function _isBlock(bool lock) internal pure returns (Status) {
+        return lock ? Status.Block : Status.Unblock;
     }
 
     function getCodeInfoSmC(
         bytes32 codeHash
-    ) external view returns (PackageInfo memory) {
+    ) external view returns (Code memory) {
         return mPackageInfo[codeHash];
     }
 
@@ -355,7 +359,7 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
     // function activateCode(
     //     bytes32 code
     // ) external onlyBoostStorage returns (bool) {
-    //     mPackageInfo[code].status = PackageStatus.Active;
+    //     mPackageInfo[code].status = Status.Active;
     //     mPackageInfo[code].activeTime = block.timestamp;
     //     mPackageInfo[code].expirationTime =
     //         block.timestamp +
@@ -367,28 +371,28 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
     // function handleExpiredCode(
     //     bytes32 code
     // ) external onlyBoostStorage returns (bool) {
-    //     mPackageInfo[code].status = PackageStatus.Expired;
+    //     mPackageInfo[code].status = Status.Expired;
     //     return true;
     // }
 
     function GetMyCode(uint32 _page) 
     external 
     view 
-    returns(bool isMore, PackageInfo[] memory arrayPack) {
+    returns(bool isMore, Code[] memory arrayPack) {
         uint length = INFT(nft).balanceOf(msg.sender);
         if (_page * returnRIP > length + returnRIP) { 
             return(false, arrayPack);
         } else {
             if (_page*returnRIP < length ) {
                 isMore = true;
-                arrayPack = new PackageInfo[](returnRIP);
+                arrayPack = new Code[](returnRIP);
                 for (uint i = 0; i < arrayPack.length; i++) {
                         arrayPack[i] = mPackageInfo[bytes32(INFT(nft).tokenOfOwnerByIndex(msg.sender,_page*returnRIP - returnRIP +i))];
                 }
                 return (isMore, arrayPack);
             } else {
                 isMore = false;
-                arrayPack = new PackageInfo[](returnRIP -(_page*returnRIP - length));
+                arrayPack = new Code[](returnRIP -(_page*returnRIP - length));
                  for (uint i = 0; i < arrayPack.length; i++) {
                     arrayPack[i] = mPackageInfo[bytes32(INFT(nft).tokenOfOwnerByIndex(msg.sender,_page*returnRIP - returnRIP +i))];
                 }
@@ -400,21 +404,21 @@ contract KventureCode is Initializable, OwnableUpgradeable, PackageInfoStruct {
     function GetUserCode(uint32 _page, address _user) 
     external onlyOwner
     view 
-    returns(bool isMore, PackageInfo[] memory arrayPack) {
+    returns(bool isMore, Code[] memory arrayPack) {
         uint length = INFT(nft).balanceOf(_user);
         if (_page * returnRIP > length + returnRIP) { 
             return(false, arrayPack);
         } else {
             if (_page*returnRIP < length ) {
                 isMore = true;
-                arrayPack = new PackageInfo[](returnRIP);
+                arrayPack = new Code[](returnRIP);
                 for (uint i = 0; i < arrayPack.length; i++) {
                         arrayPack[i] = mPackageInfo[bytes32(INFT(nft).tokenOfOwnerByIndex(_user,_page*returnRIP - returnRIP +i))];
                 }
                 return (isMore, arrayPack);
             } else {
                 isMore = false;
-                arrayPack = new PackageInfo[](returnRIP -(_page*returnRIP - length));
+                arrayPack = new Code[](returnRIP -(_page*returnRIP - length));
                  for (uint i = 0; i < arrayPack.length; i++) {
                     arrayPack[i] = mPackageInfo[bytes32(INFT(nft).tokenOfOwnerByIndex(_user,_page*returnRIP - returnRIP +i))];
                 }

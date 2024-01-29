@@ -102,11 +102,6 @@
 						"type": "bytes32[]"
 					},
 					{
-						"internalType": "bool",
-						"name": "_cloudMining",
-						"type": "bool"
-					},
-					{
 						"internalType": "address",
 						"name": "_delegate",
 						"type": "address"
@@ -921,19 +916,19 @@
 			]
 		},
 		"AbstractPackage.sol": {
-			"keccak256": "0x53db02a584d2470160cabb302196748f86b7cbbd8abbc989af2be325ed3c2983",
+			"keccak256": "0x7065b03e9429fe3501cc7a6eb4ea45c13828add173035ffa285e8c7bc60f0cae",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://3d95df44b5ec419884144d1195bbf20e32694cb053b92f19f4fed33829702c35",
-				"dweb:/ipfs/QmZjs5gX8UjVpgDhriQPHYiewkGAWoXLSimKZcg87ZC5Na"
+				"bzz-raw://dee0fe19cf413b83d273e88ced728215289d360338d867d654f1d32f7006b4e7",
+				"dweb:/ipfs/QmNZYknSxVAfAVxDnRoYkV2LdFBWAWF5P6epMA7rD38RaD"
 			]
 		},
 		"GenerateCode.sol": {
-			"keccak256": "0x2c76eb751ae889c4282e128bf02471c430134855c217b27cfae671b85b97b1f3",
+			"keccak256": "0x2744194ac87e3dba78b87c7608d3d57fedf14574e972a026626e25352e77c0df",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://523e274eb996b53814e0b1f028e1a6ccd0a41cda02260dfd0f54b14ddaf42ef0",
-				"dweb:/ipfs/QmeMj5LuZa5TK6sH1y6vV4KtZX7Bj5L3wr3qLM4nR2PkRJ"
+				"bzz-raw://c1a340a21dfe6c6cc53800760843184a49516f503066fa4673bb7abd761760ef",
+				"dweb:/ipfs/QmW8StuEFV85MihiJ2Fs2f3MPfsyK1GXAckWaPtK29fx2s"
 			]
 		}
 	},

@@ -14,7 +14,7 @@ interface IKventureCode{
         uint quantity,
         bool lock,
         bytes32[] calldata codeHashes,
-        bool _cloudMining,
+        // bool _cloudMining,
         address _delegate
         // bytes32 codeRef
     ) external returns (uint[] memory);
@@ -100,7 +100,7 @@ function order(
         uint256[] memory quaArr,
         bool[] memory lockArr,
         bytes32[][] calldata codeHashes,
-        bool[] memory cloudMinings,
+        // bool[] memory cloudMinings,
         address[] memory delegates,
         bytes32 codeRef,
         address to
@@ -108,7 +108,7 @@ function order(
         // If to is member or buy using code ref 
         require(ref.CheckActiveMember(to) || ref.GetRefCodeOwner(codeRef) != address(0),"Non member can not order");
         require(quaArr.length == idArr.length && quaArr.length == lockArr.length && lockArr.length == codeHashes.length 
-        && codeHashes.length == cloudMinings.length && cloudMinings.length == delegates.length
+        && codeHashes.length == delegates.length
         ,"lengths of arrays not equal");
         
         uint256 memPrice;
@@ -120,7 +120,7 @@ function order(
 
         }
         bytes32 orderId = keccak256(abi.encodePacked(msg.sender,to,idArr.length,block.timestamp));
-        uint[] memory codesArr = _getTokenIdArr(idArr,quaArr,lockArr,codeHashes,cloudMinings,delegates);
+        uint[] memory codesArr = _getTokenIdArr(idArr,quaArr,lockArr,codeHashes,delegates);
         mOrderArr[to].push(orderId);
         mOrder[orderId].id= orderId;
         mOrder[orderId].buyer= to;
@@ -164,7 +164,7 @@ function order(
         uint256[] memory quaArr,
         bool[] memory lockArr,
         bytes32[][] calldata codeHashes,
-        bool[] memory cloudMinings,
+        // bool[] memory cloudMinings,
         address[] memory delegates
         // uint256 _totalQuantity
     )internal returns(uint[] memory){
@@ -176,7 +176,7 @@ function order(
         uint[] memory codesArr = new uint[](totalQuantity);
         for(uint i=0;i< idArr.length;i++){
             uint[] memory codes = new uint[](quaArr[i]);
-            codes =_order(idArr[i],quaArr[i],lockArr[i],codeHashes[i],cloudMinings[i],delegates[i]);
+            codes =_order(idArr[i],quaArr[i],lockArr[i],codeHashes[i],delegates[i]);
 
             for(uint j=0;j<codes.length;j++){
                 codesArr[offset+j]= codes[j];
@@ -190,7 +190,7 @@ function order(
         uint256 _quantity,
         bool _lock,
         bytes32[] calldata _codeHashes,
-        bool _cloudMining,
+        // bool _cloudMining,
         address _delegate
         // bytes32 codeRef
         )internal returns(uint[] memory) {
@@ -203,7 +203,7 @@ function order(
             _quantity,
             _lock,
             _codeHashes,
-            _cloudMining,
+            // _cloudMining,
             _delegate
         );
         for(uint256 i=0;i<codes.length;i++){
